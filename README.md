@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-DeepMailer v1.0 is a comprehensive Windows-based email marketing and campaign management software designed for professional email marketing campaigns. Built with Python PyQt6 and featuring a modern, customizable interface, this software provides advanced email sending capabilities with extensive personalization, automation, and anti-detection features.
+DeepMailer v1.0 is a comprehensive Windows-based email marketing and campaign management software designed for professional email marketing campaigns. Built with Python PyQt6 and featuring QSS-based theme customization, this desktop application provides advanced email sending capabilities with extensive personalization, automation, and anti-detection features.
 
 ## 🎯 Key Features
 
@@ -27,15 +27,15 @@ DeepMailer v1.0 is a comprehensive Windows-based email marketing and campaign ma
 ### System Requirements
 - **Operating System**: Windows 10/11 only
 - **Programming Language**: Python with PyQt6
-- **UI Framework**: QSS-based theming system
-- **Architecture**: Multithreaded with separated core logic and GUI
+- **UI Framework**: QSS-based theming system with switchable themes from settings
+- **Architecture**: Multithreaded with separated core logic and GUI for future web version compatibility
 
 ### Key Technical Features
 - **Compilation Compatibility**: Full support for Nuitka, Cython, and PyInstaller
 - **No External Dependencies**: No database required - JSON-based data storage
 - **Real-time Data Persistence**: Automatic saving prevents data loss
-- **Professional UI**: Embedded browser components, loading animations, responsive design
-- **Resource Management**: Structured image, theme, and font organization
+- **Professional Desktop UI**: QSS-styled interface with loading animations and responsive design
+- **Resource Management**: Structured image, theme, and font organization with JSON path management
 
 ## 🏗️ Application Architecture & UI Layout
 
@@ -235,13 +235,18 @@ ProjectDirectory/
 
 **Domain-Based Sending Features:**
 - **Domain Extraction**: Automatic extraction of unique email domains from selected leads
-- **Domain Reordering**: Drag-and-drop interface to reorder domain priority
+- **Domain Management Interface**: 
+  - Right side shows extracted domains (e.g., outlook.com, yahoo.com, gmail.com)
+  - Drag-and-drop interface to reorder domain priority
+  - Visual domain list with reordering capabilities
 - **Sequential Domain Processing**: Send to all leads of first domain, then second domain, etc.
 - **Domain Rotation Option**: 
-  - Checkbox to enable rotation between domains
-  - Send one email to each domain in sequence, then repeat cycle
-  - Example: Send to outlook.com → yahoo.com → gmail.com → outlook.com (repeat)
+  - **Rotation Checkbox** (default: off): Enable rotation between domains
+  - **When Enabled**: Send one email to each domain in sequence, then repeat cycle
+  - **Example**: Send to outlook.com → yahoo.com → gmail.com → outlook.com (repeat)
+  - **When Disabled**: Send to all leads in first domain, then all in second domain, etc.
 - **Duplicate Prevention**: Guaranteed no duplicate emails to same recipient address
+- **Domain Order Control**: Complete user control over domain sending priority
 
 ### Subject Line Configuration
 **Subject Management:**
@@ -295,7 +300,7 @@ ProjectDirectory/
 
 ### Custom Headers Configuration
 **Header Management System:**
-Comprehensive email header customization with individual configuration per header type:
+Comprehensive email header customization with individual configuration per header type. Each header includes Enable/Disable dropdown (default: disabled) with Configure button:
 
 **Message-ID Headers:**
 - **Enable/Disable**: Individual control with configuration button
@@ -303,86 +308,323 @@ Comprehensive email header customization with individual configuration per heade
   ```
   <{{uuid}}@{{domain}}>
   <{{timestamp}}.{{random}}@{{domain}}>
+  <{{timestamp}}-{{user_id}}@{{domain}}>
   <{{campaign}}-{{batch}}-{{uuid}}@{{domain}}>
+  <{{random_alphanum}}@{{domain}}>
+  <{{custom_string}}@{{domain}}>
+  <{{date}}-{{sequence}}@{{domain}}>
+  <{{hash}}@{{domain}}>
   <{{email}}-{{uuid}}@{{domain}}>
   <{{FakerFullName}}-{{sequence}}@{{domain}}>
+  <{{email}}.{{random_alphanum}}@{{domain}}>
+  <{{FakerCompany}}-{{uuid}}@{{domain}}>
+  <{{email}}-{{list_name}}-{{counter}}@{{domain}}>
+  <{{ColumnName}}-{{uuid}}@{{domain}}>
+  <{{FakerWord}}-{{uuid}}@{{domain}}>
   ```
 - **Format Rotation**: Each Mail / Custom range options
 - **Header Use Policy**: Must use each time / Optional application
 
-**Tracking Headers:**
-- **X-Tracking-ID**: Custom tracking identifier formats
-- **X-Campaign-ID**: Static campaign names/IDs with placeholder support
-- **X-UID**: Unique identifier header configurations
+**X-Tracking-ID Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Format Options**: Custom tracking identifier formats (one per line):
+  ```
+  {{uuid}}
+  {{hash}}
+  {{random}}
+  {{random_alphanum}}
+  {{FakerUUID}}
+  {{FakerRandomNumber}}
+  {{timestamp}}
+  {{date}}-{{sequence}}
+  {{timestamp}}-{{counter}}
+  {{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}
+  {{email}}-{{uuid}}
+  {{email}}-{{timestamp}}
+  {{FakerFirstName}}-{{FakerLastName}}-{{uuid}}
+  {{campaign}}-{{batch}}-{{uuid}}
+  {{campaign}}-{{timestamp}}
+  {{campaign}}-{{email}}
+  {{campaign}}-{{batch}}-{{email}}-{{uuid}}
+  {{hash}}-{{counter}}
+  {{user_id}}-{{uuid}}
+  {{list_name}}-{{counter}}
+  {{column1}}-{{column2}}-{{uuid}}
+  ```
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
 
-**Email Client Simulation:**
-- **X-Mailer**: 80+ predefined email client options including:
-  - Microsoft Outlook versions (16.0, 15.0, 14.0, Express)
-  - Apple Mail versions (iPhone, iPad, Mac)
-  - Mozilla Thunderbird versions
-  - Mobile clients (Android Mail, Samsung Email)
-  - Web clients (Gmail, Yahoo, Roundcube)
-  - Professional tools (PHPMailer, SendGrid, Mailgun)
-  - Server software (Sendmail, Exim, Postfix)
+**X-Campaign-ID Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Static Campaign Names**: Multiple campaign names/IDs (one per line) with placeholder support
+- **Custom Override**: Option to override {{campaign}} and {{batch}} default values
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
 
-**Email Classification Headers:**
-- **X-Origin**: Origin server identification with custom values
-- **X-Email-Type**: Email type classification (Transactional, Marketing, Newsletter, etc.)
-- **X-Campaign-Name**: Campaign naming with placeholder integration
+**X-UID Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Format Options**: Custom UID formats (one per line) using any placeholders
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
 
-**Priority & Management Headers:**
-- **Auto-Submitted**: auto-generated, auto-replied, no, or random options
-- **Precedence**: bulk, list, junk, normal, or random selection
-- **Priority**: high, normal, low, or random with range configuration
-- **X-Priority**: 1-5 priority levels with descriptions
-- **Importance**: high, normal, low, or random selection
-- **X-Auto-Response-Suppress**: Comprehensive auto-response suppression options
+**Email Client Simulation (X-Mailer):**
+- **Enable/Disable**: Individual control with configuration button
+- **80+ Predefined X-Mailer Values** (one per line):
+  ```
+  Microsoft Outlook 16.0
+  Microsoft Outlook 15.0
+  Microsoft Outlook 14.0
+  Microsoft Outlook Express 6.00.2900.2869
+  Microsoft Windows Live Mail 16.4.3528.0331
+  Microsoft Exchange Server 2016
+  Microsoft Exchange Server 2013
+  Microsoft-MacOutlook/16.81.0.24062400
+  Apple Mail (2.3696.100.31)
+  Apple Mail (2.3654.120.0.1.13)
+  iPhone Mail (17G68)
+  iPhone Mail (20A5358e)
+  iPad Mail (15E148)
+  Mozilla Thunderbird 115.3.1
+  Mozilla Thunderbird 102.10.0
+  Mozilla Thunderbird 91.13.1
+  Android Mail 9.0.0.20702
+  Samsung Email 6.1.00.16
+  Gmail Web
+  YahooMailWebService/0.8.111_71
+  Airmail 3.6.70 (527)
+  The Bat! (v9.5.1)
+  The Bat! (v7.4.16)
+  Lotus Notes Release 8.5
+  Lotus Notes Release 9.0
+  Zimbra 8.8.15_GA_3869
+  Roundcube Webmail/1.6.2
+  Roundcube Webmail/1.4.13
+  Alpine 2.23 (LNX 1166 2018-08-05)
+  Postbox 7.0.42
+  Claws Mail 3.18.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+  Evolution 3.46.4-1
+  KMail/5.21.3 (20.12.3)
+  Mutt/1.14.7 (2020-09-21)
+  MailMate (5878)
+  PHPMailer 6.7.1 (https://github.com/PHPMailer/PHPMailer)
+  PHPMailer 5.2.27 (https://github.com/PHPMailer/PHPMailer)
+  SwiftMailer 6.3.0
+  SwiftMailer 5.4.12
+  Mailgun PHP 4.0.0
+  SendGrid Mailer
+  Amazon Simple Email Service (SES)
+  MailChimp Mailer
+  Mailgun Mailer
+  Sendmail 8.16.1
+  Sendmail 8.15.2
+  Exim 4.96
+  Exim 4.94
+  Postfix 3.6.4
+  Postfix 3.4.13
+  Sympa 6.2.60
+  MailEnable Standard 10.36
+  ```
+- **X-Mailer Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
+
+**X-Origin Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Origin Values**: Custom origin servers (one per line):
+  ```
+  webmail.google.com
+  outbound-mail.company.com
+  app-server-01.internal
+  relay01.hostingprovider.net
+  {{FakerIPv4}}
+  (Any custom text or placeholders allowed)
+  ```
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
+
+**X-Email-Type Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Email Types**: Classification values (one per line):
+  ```
+  Transactional
+  Marketing
+  Notification
+  Alert
+  Reminder
+  Welcome
+  PasswordReset
+  AccountActivation
+  Receipt
+  Invoice
+  Newsletter
+  Survey
+  Invitation
+  System
+  Support
+  Promotion
+  (Plus placeholder support like {{FakerWord}})
+  ```
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
+
+**X-Campaign-Name Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Campaign Names**: Custom campaign names (one per line):
+  ```
+  SummerSale2025
+  BlackFridayPromo
+  WelcomeSeries
+  JulyNewsletter
+  BlackFridayPromo-{{uuid}}
+  {{campaign}}
+  {{FakerWord}}
+  {{FakerCompany}}-{{campaign}}
+  {{campaign}}-{{batch}}
+  ```
+- **Custom Override**: Option to override {{campaign}} and {{batch}} values
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
+
+**Auto-Submitted Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - auto-generated
+  - auto-replied
+  - no
+  - random (with From/To range specification for random selection)
+- **Header Use Policy**: Must use each time / Optional application
+
+**Precedence Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - bulk
+  - list
+  - junk
+  - normal
+  - random (with From/To range for rotating among all options)
+- **Header Use Policy**: Must use each time / Optional application
+
+**Priority Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - high
+  - normal
+  - low
+  - random (with From/To range for rotation)
+- **Header Use Policy**: Must use each time / Optional application
+
+**X-Priority Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - 1 (Highest)
+  - 2 (High)
+  - 3 (Normal)
+  - 4 (Low)
+  - 5 (Lowest)
+  - random (with From/To range for rotation among 1-5)
+- **Header Use Policy**: Must use each time / Optional application
+
+**Importance Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - high
+  - normal
+  - low
+  - random (with From/To range for rotation)
+- **Header Use Policy**: Must use each time / Optional application
+
+**X-Auto-Response-Suppress Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Options**: Dropdown with choices:
+  - All (suppress all automatic responses)
+  - OOF (suppress Out of Office replies)
+  - AutoReply (suppress automatic replies)
+  - AutoForward (suppress auto-forwarding)
+  - DR (suppress Delivery Receipts)
+  - RN (suppress Read Notifications)
+  - NRN (suppress Non-Read Notifications)
+  - Random (randomly pick one option)
+- **Type Rotation**: Each Time / Custom range for rotation frequency
+- **Header Use Policy**: Must use each time / Optional application
 
 **Unsubscribe Headers:**
-- **List-Unsubscribe**: RFC-compliant unsubscribe with multiple format support
-- **List-Unsubscribe-Post**: One-click unsubscribe (Disable/Enable/Random)
-- **Custom Formats**: Full placeholder support for unsubscribe links
+- **List-Unsubscribe**: Enable/Disable with configuration
+- **Format Options**: Multiple unsubscribe formats (one per line):
+  ```
+  <mailto:unsubscribe@yourdomain.com>
+  <mailto:unsubscribe@{{domain}}>
+  <mailto:{{FakerFullName}}@yourdomain.com>
+  <mailto:{{FakerFullName}}@{{domain}}>
+  <mailto:{{campaign}}@yourdomain.com>
+  <mailto:{{campaign}}@{{domain}}>
+  <mailto:unsubscribe@yourdomain.com?{{subject}}=unsubscribe>
+  <https://yourdomain.com/unsubscribe?email={email}>
+  <https://yourdomain.com/unsubscribe/{{token}}>
+  <mailto:unsubscribe@yourdomain.com>, <https://yourdomain.com/unsubscribe/{{token}}>
+  ```
+- **List-Unsubscribe-Post**: Dropdown with Disable/Enable/Random for one-click unsubscribe
+- **Format Rotation**: Each Time / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
 
-**Custom Header Addition:**
-- **Add More Headers**: Unlimited custom header creation
-- **Custom Configuration**: User-defined header names and values
-- **Placeholder Integration**: Full support for all placeholder types
-- **Individual Rotation**: Per-header rotation and policy configuration
+**Add More Headers:**
+- **Custom Header Addition**: "Add more header" button for unlimited custom headers
+- **Custom Configuration**: User-defined header names (e.g., "X-Custom-Header")
+- **Remove Option**: (-) button to delete custom headers
+- **Value Configuration**: Custom values (one per line) with full placeholder support
+- **Rotation Options**: Each Mail / Custom range for custom headers
+- **Header Use Policy**: Must use each time / Optional application
 
 **Advanced Header Policies:**
 - **Header Use Limit**: 
   - **All**: Use all enabled headers for each email
   - **Custom**: Minimum/maximum header count per email
-- **Disable Sometimes**: Optional random header omission for detection avoidance
+    - Minimum automatically set to number of "Must use" headers
+    - Maximum can be any number up to total headers
+    - Optional headers rotate up to maximum limit
+- **Disable Sometimes**: Optional checkbox (default: off)
+  - When enabled: Even "Must use" headers may be omitted sometimes
+  - Completely randomizes header usage for detection avoidance
+  - Some emails sent with no custom headers at all
 - **Rotation Patterns**: Each Mail / Custom range rotation for all headers
 - **Policy Options**: Must use / Optional application for each header type
 
 ### Sending Modes
+**Mode Selection**: Dropdown with four exclusive choices (only one can be selected):
+
 **Single Mode (One-by-One):**
 - **Sequential Sending**: Email sent individually with configurable delays
 - **Delay Configuration**: From/To delay ranges with unit selection (seconds/minutes/hours)
 - **Example**: Delay from 10 seconds to 20 seconds between each email
 - **Precision Control**: Exact timing control for careful delivery patterns
+- **Process**: Send one email → wait random delay in range → send next email → repeat
 
 **Batch Mode (Group Sending):**
 - **Batch Size Configuration**: Minimum and maximum batch sizes (e.g., 10-20 emails per batch)
 - **Dynamic Batching**: Random batch sizes within defined ranges
-- **Batch Delays**: Configurable delays between batches with unit selection
+- **Batch Delays**: Configurable delays between batches with unit selection (sec/min/hour)
+- **Example**: Send 15 emails at once → wait 5-10 minutes → send next batch of 12 emails
 - **Efficient Processing**: Optimized for high-volume sending
 
 **Date & Time Mode (Scheduled Sending):**
 - **Time Window Definition**: From Date/Time and To Date/Time selection with calendars
+- **Current Date/Time Display**: Shows current system date and time for reference
 - **Send Limit Configuration**: Maximum emails per time window (e.g., 100 emails)
 - **Automatic Calculation**: Tool calculates optimal delays to meet schedule
-- **Multiple Ranges**: Add multiple date/time ranges with individual limits
-- **Coverage Warning**: Alert when configuration won't cover all leads
+- **Multiple Ranges**: "Add more" button to add multiple date/time ranges with individual limits
+- **Coverage Analysis**: 
+  - Shows total leads vs. configured limits
+  - Displays remaining leads after all configured ranges
+  - Warning if configuration won't cover all leads
+- **Example**: Send 100 emails between Jan 1 8:00 AM and Jan 1 6:00 PM
 
 **Spike Mode (Day-by-Day Planning):**
-- **Daily Limit Planning**: Specify exact email count per day (e.g., Day 1: 100 emails)
-- **Progressive Sending**: Gradually increase daily limits over time
-- **Multi-Day Configuration**: Add unlimited days with individual limits
+- **Daily Limit Planning**: Specify exact email count per day
+- **Day Configuration**: Add Day 1, Day 2, Day 3, etc. with individual email limits
+- **Progressive Sending**: Gradually increase daily limits over time (optional)
+- **Multi-Day Configuration**: "Add more" button for unlimited days
 - **Automatic Scheduling**: Tool manages 24-hour distribution for each day's limit
 - **Remaining Tracking**: Real-time display of remaining leads after each day's plan
+- **Example**: Day 1: 100 emails, Day 2: 150 emails, Day 3: 200 emails
+- **Coverage Analysis**: Shows total leads vs. total planned sends across all days
 
 ### Campaign Scheduling
 **Schedule Configuration:**
@@ -513,9 +755,9 @@ Comprehensive email header customization with individual configuration per heade
   - From Email address configuration
 
 **From Name Header Management:**
-- **Header Option**: Enable/Disable dropdown (default: Disable)
+- **Header Option**: Enable/Disable dropdown (default: Disable) with edit icon for reconfiguration
 - **Header Mode Selection**:
-  - **Custom**: User-defined From Names (one or multiple)
+  - **Custom**: User-defined From Names (one or multiple, one per line)
   - **Faker**: Auto-generated unique names using Faker library
 - **Rotation Settings**:
   - **Each time**: Rotate From Name with every email send
@@ -524,78 +766,90 @@ Comprehensive email header customization with individual configuration per heade
   - **Must Use** (default): Always apply configured From Name
   - **Random**: Define usage pattern with From/To ranges
     - Use header for X emails, skip for Y emails, repeat cycle
+    - Example: Use header for 12 emails, skip for 20 emails, repeat
     - Improves inbox placement through unpredictable patterns
 
 **Reply-To Header Management:**
-- **Header Option**: Enable/Disable dropdown (default: Disable)  
+- **Header Option**: Enable/Disable dropdown (default: Disable) with edit icon for reconfiguration
 - **Header Mode Selection**:
-  - **Custom**: User-defined Reply-To emails (one or multiple)
+  - **Custom**: User-defined Reply-To emails (one or multiple, one per line)
   - **Faker**: Auto-generated emails using provided domains (one domain per line)
 - **Rotation Settings**:
   - **Each time**: Rotate Reply-To with every email send
   - **After X to Y emails**: Define rotation range for Reply-To addresses
+    - Example: Use same Reply-To for 10-20 emails, then rotate to next
 - **Header Use Policy**:
   - **Must Use** (default): Always apply configured Reply-To
   - **Random**: Random application pattern
     - Use Reply-To for X emails, use SMTP default for Y emails
+    - Example: Use Reply-To for 10-15 emails, skip for next 15 emails
     - Creates natural variation to avoid detection
 
 **Proxy Integration:**
-- **Proxy Enable/Disable**: Optional proxy usage per SMTP
+- **Proxy Enable/Disable**: Optional proxy usage per SMTP with edit icon
 - **Multiple Proxy Support**: Add unlimited proxies with automatic rotation
-- **Proxy Configuration**:
+- **Add Proxy Configuration**:
   - IP/Host and Port settings
   - Proxy Type: HTTP, HTTPS, SOCKS5
-  - Authentication: Optional username/password
+  - Authentication: Optional username/password checkbox
   - SMTP Host for proxy testing
+- **Proxy Testing**: Built-in connectivity testing for each proxy
 - **Fallback Options**:
   - Stop using SMTP if proxy fails
   - Fallback to system default (no proxy)
-- **Proxy Testing**: Built-in connectivity testing for each proxy
+- **Mandatory Proxy Use**: When enabled, proxy must be used every time
+- **Rotation**: If multiple proxies added, automatic rotation between them
 
 **Rate Limiting System:**
-- **Limit Control**: Enable/Disable with configurable limits
+- **Limit Control**: Enable/Disable with edit icon and Reset Limit button
 - **Time-based Limits**:
-  - Per Minute: X emails per minute
-  - Hourly: X emails per hour (60 minutes)
-  - Daily: X emails per day (24 hours)  
-  - Weekly: X emails per week (7 days)
-  - Monthly: X emails per month (30 days)
+  - **Per Minute**: X emails per minute
+  - **Hourly**: X emails per hour (60 minutes)
+  - **Daily**: X emails per day (24 hours)  
+  - **Weekly**: X emails per week (7 days)
+  - **Monthly**: X emails per month (30 days)
 - **Total Usage Limits**:
   - Set maximum total emails (0 = unlimited)
   - Automatic SMTP deactivation when limit reached
-  - Reset functionality to clear usage counters
+  - Status update: "Inactive - Reason: Limit Reached"
+  - Reset functionality to clear usage counters (enabled only when limits used)
 - **Usage Tracking**:
   - Real-time usage monitoring
   - Automatic status updates (Active/Inactive)
   - Detailed usage statistics and timestamps
+  - Precise timing calculations for limit enforcement
 
 **SMTP Table Management:**
+- **Pagination**: 10/25/50 per page (configurable from Configuration panel)
 - **Table View Columns**:
   - Server Name, Description, Host, Port
   - Username/Email, From Email
   - Added Date, Last Update Date, Status
+- **Search/Filter**: Filter by Server Name, Host, or Status
 - **Quick Actions**:
-  - Test SMTP: Individual or bulk testing
-  - Details: Full configuration popup with horizontal scroll
-  - Edit: Modify any SMTP configuration
-  - Delete: Remove SMTP and associated JSON file
-- **Testing Features**:
-  - Single SMTP testing with detailed results
-  - Bulk testing of multiple SMTPs
-  - Failed SMTPs highlighted in red with error reasons
-  - Success indicators for passed tests
-- **Performance Features**:
-  - Pagination support (10/25/50 per page)
-  - Search/filter by Server Name, Host, or Status
-  - Optional tagging/categorization for organization
+  - **Test SMTP**: Individual or bulk testing
+    - Single SMTP testing with detailed results
+    - Bulk testing of multiple SMTPs
+    - Failed SMTPs highlighted in red with error reasons
+    - Success indicators for passed tests
+  - **Details**: Full configuration popup with horizontal scroll
+    - Professional table format showing all configuration fields
+    - Horizontal scroll for long data content
+  - **Edit**: Modify any SMTP configuration
+  - **Delete**: Remove SMTP and associated JSON file
+- **Optional Features**:
+  - Tag/Category field for grouping SMTPs by provider
+  - Advanced sorting and filtering options
 
-**Advanced Features:**
-- **JSON Storage**: Each SMTP stored as individual JSON file
-- **Connection Testing**: Built-in SMTP validation and testing
-- **Multi-SMTP Rotation**: Automatic rotation between available SMTPs
-- **Status Management**: Real-time status tracking and updates
-- **Edit Icons**: Quick edit buttons for header and proxy configurations
+**JSON Storage**: Each SMTP stored as individual JSON file in `Data/SMTP/ServerName.json`
+**Complete Configuration Fields Stored**:
+- Server Name, Description, Host, Port, Authentication, Security
+- Username, Password, From Email
+- From Name settings (Enable/Disable, Mode, Custom/Faker, Rotation)
+- Reply-To settings (Enable/Disable, Mode, Custom/Faker, Rotation)
+- Proxy settings (Enable/Disable, IP/Host, Port, Type, Auth, Fallback)
+- Limit settings (Enable/Disable, Type, Values, Usage tracking)
+- Added timestamp, Last update, Status, Test results
 
 ### 3. Subject Line Management
 **List Management:**
@@ -1065,7 +1319,7 @@ Multiple format support including:
 - **Responsive Design**: Automatic adaptation to different screen sizes
 - **Resource Management**: External SVG/PNG icons with JSON path management
 - **Loading Animations**: Professional loading indicators for all operations
-- **Embedded Browser**: Internal browser component (CEF/Chromium)
+- **QSS Theming**: Switchable themes with QSS styling system
 
 ### Layout Structure
 - **Left Panel Navigation**:
@@ -1185,7 +1439,7 @@ Upon completion, two comprehensive documentation sets will be provided:
 
 ### Architecture Decisions
 - **Individual SMTP Storage**: Each SMTP as separate JSON file with complete configuration
-- **Embedded Browser**: CEF/Chromium integration within application (no external windows)
+- **Desktop Application**: Pure PyQt6 desktop application with QSS styling (no browser components)
 - **Threading Model**: Individual threads per campaign for complete isolation
 - **Configuration Management**: Both file-based storage and GUI-editable settings with auto-sync
 - **Data Persistence**: Real-time auto-save and manual save options for all user actions
@@ -1203,11 +1457,12 @@ Upon completion, two comprehensive documentation sets will be provided:
 - **JSON Configuration**: All settings stored in JSON format for portability and editing
 
 ### UI Framework Specifications
-- **PyQt6 Implementation**: Complete application built with PyQt6 framework
+- **PyQt6 Implementation**: Complete desktop application built with PyQt6 framework
 - **QSS Styling**: External QSS files for theme management and customization
 - **Theme Switching**: Runtime theme switching capability from settings
 - **Professional Design**: Commercial-grade interface without emojis
 - **External Icons**: SVG/PNG images with JSON path management system
+- **Loading Animations**: Professional loading indicators for all operations
 
 ### Threading Architecture
 - **Multi-Campaign Support**: Each campaign runs in dedicated thread
