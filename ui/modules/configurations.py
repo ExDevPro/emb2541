@@ -34,7 +34,7 @@ class PlaceholderConfigWidget(QWidget):
         
         # Title
         title = QLabel("Custom Placeholders Configuration")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # Tab widget for different placeholder types
@@ -209,7 +209,7 @@ class SpintextConfigWidget(QWidget):
         
         # Title
         title = QLabel("Spintext Configuration")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # Instructions
@@ -219,7 +219,7 @@ class SpintextConfigWidget(QWidget):
 <b>Example:</b> amazing = amazing|fantastic|incredible|awesome
         """)
         instructions.setWordWrap(True)
-        instructions.setStyleSheet("background: #f0f0f0; padding: 10px; border-radius: 5px;")
+        instructions.setObjectName("help-text")
         layout.addWidget(instructions)
         
         # Controls
@@ -391,7 +391,7 @@ class SpintextEditDialog(QDialog):
         
         # Help text
         help_text = QLabel("Each variation will be randomly selected when {{{word}}} is used in templates")
-        help_text.setStyleSheet("color: #666; font-size: 12px;")
+        help_text.setObjectName("help-text")
         layout.addWidget(help_text)
         
         # Buttons
@@ -427,7 +427,7 @@ class UnsubscribeConfigWidget(QWidget):
         
         # Title
         title = QLabel("Unsubscribe Link Configuration")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # Instructions
@@ -436,7 +436,7 @@ Configure multiple unsubscribe link formats. When using {{unsubscribe}} placehol
 a random format will be selected from the list below.
         """)
         instructions.setWordWrap(True)
-        instructions.setStyleSheet("background: #f0f0f0; padding: 10px; border-radius: 5px;")
+        instructions.setObjectName("help-text")
         layout.addWidget(instructions)
         
         # Formats editor
@@ -458,7 +458,7 @@ a random format will be selected from the list below.
 • <code>&lt;mailto:{{campaign}}@{{domain}}&gt;</code> - Campaign-specific mailto
         """)
         examples.setWordWrap(True)
-        examples.setStyleSheet("font-size: 12px; color: #666;")
+        examples.setObjectName("help-text")
         layout.addWidget(examples)
         
         # Save button
@@ -503,7 +503,7 @@ class ConfigurationsWidget(QWidget):
         
         # Title
         title = QLabel("⚙️ Configurations")
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin: 10px;")
+        title.setObjectName("page-title")
         layout.addWidget(title)
         
         # Tab widget for different configuration sections

@@ -647,7 +647,7 @@ class CampaignsWidget(QWidget):
         header_layout = QHBoxLayout()
         
         title = QLabel("🚀 Campaign Management")
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin: 10px;")
+        title.setObjectName("page-title")
         header_layout.addWidget(title)
         
         header_layout.addStretch()

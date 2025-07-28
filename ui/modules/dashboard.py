@@ -30,18 +30,7 @@ class StatCard(QFrame):
     def setup_ui(self):
         """Setup the card UI"""
         self.setFrameStyle(QFrame.Shape.StyledPanel)
-        self.setStyleSheet("""
-            QFrame {
-                background-color: white;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 10px;
-            }
-            QFrame:hover {
-                border-color: #2196F3;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-        """)
+        self.setObjectName("stat-card")
         
         layout = QVBoxLayout(self)
         layout.setContentsMargins(15, 15, 15, 15)
@@ -50,15 +39,11 @@ class StatCard(QFrame):
         title_layout = QHBoxLayout()
         
         icon_label = QLabel(self.icon)
-        icon_label.setStyleSheet("font-size: 24px;")
+        icon_label.setObjectName("stat-icon")
         title_layout.addWidget(icon_label)
         
         title_label = QLabel(self.title)
-        title_label.setStyleSheet("""
-            font-size: 14px;
-            font-weight: bold;
-            color: #666;
-        """)
+        title_label.setObjectName("stat-title")
         title_layout.addWidget(title_label)
         title_layout.addStretch()
         
@@ -66,12 +51,7 @@ class StatCard(QFrame):
         
         # Value
         self.value_label = QLabel("0")
-        self.value_label.setStyleSheet("""
-            font-size: 32px;
-            font-weight: bold;
-            color: #2196F3;
-            margin: 10px 0;
-        """)
+        self.value_label.setObjectName("stat-value")
         self.value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.value_label)
         
@@ -105,12 +85,7 @@ class DashboardWidget(QWidget):
         
         # Page title
         title_label = QLabel("Dashboard - Overview & Statistics")
-        title_label.setStyleSheet("""
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        """)
+        title_label.setObjectName("page-title")
         main_layout.addWidget(title_label)
         
         # Create scroll area for content
@@ -137,19 +112,6 @@ class DashboardWidget(QWidget):
     def setup_data_counters(self, layout):
         """Setup data counters section"""
         group = QGroupBox("Data Overview")
-        group.setStyleSheet("""
-            QGroupBox {
-                font-size: 16px;
-                font-weight: bold;
-                color: #333;
-                margin-top: 10px;
-                padding-top: 10px;
-            }
-            QGroupBox::title {
-                left: 10px;
-                top: -10px;
-            }
-        """)
         
         grid_layout = QGridLayout(group)
         grid_layout.setSpacing(15)
@@ -171,19 +133,6 @@ class DashboardWidget(QWidget):
     def setup_campaign_stats(self, layout):
         """Setup campaign statistics section"""
         group = QGroupBox("Campaign Statistics")
-        group.setStyleSheet("""
-            QGroupBox {
-                font-size: 16px;
-                font-weight: bold;
-                color: #333;
-                margin-top: 10px;
-                padding-top: 10px;
-            }
-            QGroupBox::title {
-                left: 10px;
-                top: -10px;
-            }
-        """)
         
         grid_layout = QGridLayout(group)
         grid_layout.setSpacing(15)

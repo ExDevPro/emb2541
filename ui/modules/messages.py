@@ -204,7 +204,7 @@ class TemplateEditDialog(QDialog):
         
         # Attachment info
         info_label = QLabel("Supported file types: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV, ZIP, RAR, JPG, PNG, GIF")
-        info_label.setStyleSheet("color: #666; font-size: 12px;")
+        info_label.setObjectName("help-text")
         layout.addWidget(info_label)
         
         self.tab_widget.addTab(attachments_widget, "Attachments")
@@ -222,7 +222,7 @@ class TemplateEditDialog(QDialog):
         obfuscation_layout.addWidget(self.obfuscation_enabled)
         
         obf_info = QLabel("Adds invisible HTML elements to create unique fingerprints for each email")
-        obf_info.setStyleSheet("color: #666; font-size: 12px;")
+        obf_info.setObjectName("help-text")
         obfuscation_layout.addWidget(obf_info)
         
         # Rotation settings
@@ -258,7 +258,7 @@ class TemplateEditDialog(QDialog):
         emoji_layout.addWidget(self.emoji_rotation_enabled)
         
         emoji_info = QLabel("Automatically detects and rotates emojis in the template")
-        emoji_info.setStyleSheet("color: #666; font-size: 12px;")
+        emoji_info.setObjectName("help-text")
         emoji_layout.addWidget(emoji_info)
         
         layout.addWidget(emoji_group)
@@ -496,7 +496,7 @@ class MessagesWidget(QWidget):
         header_layout = QHBoxLayout()
         
         title = QLabel("💬 Message Templates")
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin: 10px;")
+        title.setObjectName("page-title")
         header_layout.addWidget(title)
         
         header_layout.addStretch()

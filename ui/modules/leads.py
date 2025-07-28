@@ -66,7 +66,7 @@ class LeadEditDialog(QDialog):
         
         # Title
         title = QLabel("Edit Lead Information")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # Scroll area for fields
@@ -143,7 +143,7 @@ class CreateListDialog(QDialog):
         
         # Title
         title = QLabel("Create New Leads List")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # List name

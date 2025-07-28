@@ -76,7 +76,7 @@ class SubjectEditDialog(QDialog):
 • "Don't miss this {{{amazing|fantastic|incredible}}} offer!"
         """)
         help_text.setWordWrap(True)
-        help_text.setStyleSheet("font-size: 12px; padding: 10px; background: #f0f0f0; border-radius: 5px;")
+        help_text.setObjectName("help-text")
         layout.addWidget(help_text)
         
         # Buttons
@@ -447,7 +447,7 @@ class SubjectsWidget(QWidget):
         header_layout = QHBoxLayout()
         
         title = QLabel("📝 Subject Lines Management")
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin: 10px;")
+        title.setObjectName("page-title")
         header_layout.addWidget(title)
         
         header_layout.addStretch()

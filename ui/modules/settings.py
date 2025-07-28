@@ -37,7 +37,7 @@ class ThemeSettingsWidget(QWidget):
         theme_layout = QFormLayout(theme_group)
         
         self.theme_combo = QComboBox()
-        self.theme_combo.addItems(["Dark Theme", "Light Theme"])
+        self.theme_combo.addItems(["Professional Theme", "Dark Theme", "Light Theme"])
         self.theme_combo.currentTextChanged.connect(self.on_theme_changed)
         theme_layout.addRow("Theme:", self.theme_combo)
         
@@ -67,11 +67,13 @@ class ThemeSettingsWidget(QWidget):
         
     def load_settings(self):
         """Load current theme settings"""
-        theme = self.config.get('theme', 'dark')
+        theme = self.config.get('theme', 'professional')
         if theme == 'dark':
             self.theme_combo.setCurrentText("Dark Theme")
-        else:
+        elif theme == 'light':
             self.theme_combo.setCurrentText("Light Theme")
+        else:
+            self.theme_combo.setCurrentText("Professional Theme")
             
         # Load font settings
         font_size = self.config.get('font_size', 10)
@@ -82,12 +84,22 @@ class ThemeSettingsWidget(QWidget):
         
     def on_theme_changed(self, theme_text):
         """Handle theme change"""
-        theme = 'dark' if theme_text == "Dark Theme" else 'light'
+        if theme_text == "Dark Theme":
+            theme = 'dark'
+        elif theme_text == "Light Theme":
+            theme = 'light'
+        else:
+            theme = 'professional'
         self.theme_changed.emit(theme)
         
     def get_settings(self):
         """Get current settings"""
-        theme = 'dark' if self.theme_combo.currentText() == "Dark Theme" else 'light'
+        if self.theme_combo.currentText() == "Dark Theme":
+            theme = 'dark'
+        elif self.theme_combo.currentText() == "Light Theme":
+            theme = 'light'
+        else:
+            theme = 'professional'
         return {
             'theme': theme,
             'font_size': self.font_size_spin.value(),
@@ -399,7 +411,7 @@ class SettingsWidget(QWidget):
         
         # Title
         title = QLabel("🔧 Application Settings")
-        title.setStyleSheet("font-size: 20px; font-weight: bold; margin: 10px;")
+        title.setObjectName("page-title")
         layout.addWidget(title)
         
         # Tab widget for different settings categories
