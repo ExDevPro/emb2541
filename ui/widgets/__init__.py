@@ -1,0 +1,1 @@
+# UI widgets for DeepMailer v1.0
