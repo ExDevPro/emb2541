@@ -37,7 +37,59 @@ DeepMailer v1.0 is a comprehensive Windows-based email marketing and campaign ma
 - **Professional UI**: Embedded browser components, loading animations, responsive design
 - **Resource Management**: Structured image, theme, and font organization
 
-## 🏗️ Architecture
+## 🏗️ Application Architecture & UI Layout
+
+### Main Application Layout
+**Left Panel Navigation:**
+- **Dashboard** (default selection) - Overview and statistics
+- **Leads** - Lead management and import/export
+- **SMTPs** - SMTP server configuration and testing  
+- **Subject** - Subject line management and rotation
+- **Messages** - Email template creation and management
+- **Campaigns** - Campaign setup and execution
+- **Configurations** - Default placeholders and spintext settings
+- **Settings** - Application settings and theme management
+
+**Right Panel Content:**
+- **Dynamic Content Area**: Changes based on left panel selection
+- **Table Views**: Excel-style data presentation for leads, SMTPs, subjects
+- **Configuration Forms**: Comprehensive setup interfaces
+- **Real-time Statistics**: Live counters and progress indicators
+- **Campaign Controls**: Start, stop, pause, resume functionality
+
+### Dashboard Features
+**Default Landing Page:**
+- **Primary Interface**: Automatically selected when application opens
+- **Comprehensive Overview**: Complete software status and statistics display
+
+**Real-time Counters:**
+- **Data Counters**:
+  - Total Leads across all lists
+  - Total Subjects across all lists  
+  - Total SMTP servers configured
+  - Total Message Templates created
+- **Campaign Statistics**:
+  - Active campaigns count
+  - Total emails sent (success)
+  - Total emails failed with error counts
+  - Remaining emails in queue
+- **Tracking Statistics** (when enabled):
+  - Total Opens count
+  - Total Clicks count
+  - Tracking status indicators
+
+**Visual Elements:**
+- **Professional Layout**: Clean, commercial-grade interface without emojis
+- **Progress Indicators**: Real-time progress bars for active campaigns
+- **Status Badges**: Color-coded status indicators for SMTPs, campaigns
+- **Live Updates**: All counters refresh automatically without page reload
+- **Quick Navigation**: Direct access buttons to frequently used sections
+
+**Performance Monitoring:**
+- **System Status**: Application performance indicators
+- **Memory Usage**: Resource utilization display
+- **Thread Status**: Multi-campaign thread monitoring
+- **Error Summary**: Recent error counts and quick access to logs
 
 ### File Structure
 ```
@@ -146,6 +198,235 @@ ProjectDirectory/
 - **Purpose**: Dynamic content variation for improved deliverability
 - **Configuration**: Pipe-separated variations (`option1|option2|option3`)
 - **Example**: `{{{struggling}}}` → randomly selects from "struggling|having trouble|facing challenges|finding it hard"
+
+## 🎯 Campaign Setup & Execution
+
+### Campaign Creation & Management
+**Campaign List Interface:**
+- **Campaign Overview**: Right panel displays all campaigns in organized list view
+- **Campaign Selection**: Click any campaign to view detailed tab with progress, counters, and controls
+- **Quick Actions**: Delete campaigns or create new ones with dedicated buttons  
+- **Campaign Description**: Short description display area for selected campaign
+
+**New Campaign Creation:**
+- **Campaign Details**: Name and optional description input
+- **Instant Setup**: Immediate campaign creation and list addition
+- **Configuration Ready**: Direct access to comprehensive campaign setup options
+
+### SMTP Selection & Configuration
+**Multi-SMTP Support:**
+- **SMTP Selection**: Dropdown with checkbox selection for multiple SMTP servers
+- **Configuration Options**: Dedicated "Configuration" button for rotation settings
+- **SMTP Rotation Modes**:
+  - **Each Mail**: Automatic rotation through selected SMTPs for every email
+  - **Custom Range**: Define rotation range (e.g., 10-15 emails per SMTP before rotating)
+- **Limit Enforcement**: Automatic respect for individual SMTP sending limits and headers
+- **Failure Handling**: Campaign stops with error message when all SMTP limits exceeded
+
+### Lead Configuration & Sending Sequences
+**Lead List Selection:**
+- **List Dropdown**: Choose from all available lead lists
+- **Sending Sequence Configuration**: Multiple ordering options via configuration button
+- **Sequence Options**:
+  - **First to Last**: Process leads from first entry to last (default)
+  - **Last to First**: Reverse order processing from last to first entry
+  - **Randomly**: Random lead selection for each email send
+  - **Domain Based Send**: Extract and organize by email domains
+
+**Domain-Based Sending Features:**
+- **Domain Extraction**: Automatic extraction of unique email domains from selected leads
+- **Domain Reordering**: Drag-and-drop interface to reorder domain priority
+- **Sequential Domain Processing**: Send to all leads of first domain, then second domain, etc.
+- **Domain Rotation Option**: 
+  - Checkbox to enable rotation between domains
+  - Send one email to each domain in sequence, then repeat cycle
+  - Example: Send to outlook.com → yahoo.com → gmail.com → outlook.com (repeat)
+- **Duplicate Prevention**: Guaranteed no duplicate emails to same recipient address
+
+### Subject Line Configuration
+**Subject Management:**
+- **Enable/Disable Toggle**: Option to send emails without subjects
+- **Multi-Subject Selection**: Checkbox interface for selecting multiple subject lines
+- **Subject Rotation Configuration**:
+  - **Each Time**: Automatic subject rotation with every email (default for multiple subjects)
+  - **Custom Range**: Define rotation frequency (e.g., rotate every 1-5 emails)
+- **Single Subject Mode**: Same subject for all emails when only one selected
+
+### Template & Attachments Configuration
+**Template Selection:**
+- **Multi-Template Support**: Select multiple message templates with checkbox interface
+- **Attachment Handling**: Support for templates with or without attachments
+- **Template Rotation Settings**:
+  - **Each Mail**: Rotate templates with every email send
+  - **Custom Range**: Define template rotation frequency (X to Y emails per template)
+
+### Custom Tracking Configuration
+**Tracking System Setup:**
+- **Tracking Toggle**: Disabled by default, optional enablement
+- **Tracking Domain Configuration**:
+  - Main tracking domain/subdomain input
+  - API key for tracking database integration
+  - Data submission timing: Before/After send dropdown
+- **API Call Frequency**:
+  - **Every**: Submit/read tracking data before every email
+  - **Custom**: Batch processing with defined ranges (e.g., 1-5 emails per batch)
+
+**Email Open Tracking:**
+- **Custom URL Configuration**: Multiple tracking URL formats (one per line)
+- **Placeholder Support**: Full integration with all placeholder types
+- **Example Formats**:
+  ```
+  https://domain.com/open?{{uuid}}&{{campaign}}
+  https://domain2.com/open?{{uuid}}&{email}
+  https://domain3.com/open?{email}
+  ```
+
+**Email Click Tracking:**
+- **Link Selection Options**:
+  - **All**: Track all links in message (default)
+  - **Custom**: Select specific links from template with checkbox interface
+- **Click URL Configuration**: Customizable tracking URL formats (one per line)
+- **Advanced Placeholder Support**: All default placeholders and lead columns
+- **Example Click Formats**:
+  ```
+  https://domain.com/click?uid={{uuid}}&cid={{CAMPAIGN}}&redirect={{ENCODED_URL}}
+  https://domain2.com/click?uid={{uuid}}&email={EMAIL}&redirect={{ENCODED_URL}}
+  ```
+
+### Custom Headers Configuration
+**Header Management System:**
+Comprehensive email header customization with individual configuration per header type:
+
+**Message-ID Headers:**
+- **Enable/Disable**: Individual control with configuration button
+- **Format Options**: Multiple Message-ID formats (one per line):
+  ```
+  <{{uuid}}@{{domain}}>
+  <{{timestamp}}.{{random}}@{{domain}}>
+  <{{campaign}}-{{batch}}-{{uuid}}@{{domain}}>
+  <{{email}}-{{uuid}}@{{domain}}>
+  <{{FakerFullName}}-{{sequence}}@{{domain}}>
+  ```
+- **Format Rotation**: Each Mail / Custom range options
+- **Header Use Policy**: Must use each time / Optional application
+
+**Tracking Headers:**
+- **X-Tracking-ID**: Custom tracking identifier formats
+- **X-Campaign-ID**: Static campaign names/IDs with placeholder support
+- **X-UID**: Unique identifier header configurations
+
+**Email Client Simulation:**
+- **X-Mailer**: 80+ predefined email client options including:
+  - Microsoft Outlook versions (16.0, 15.0, 14.0, Express)
+  - Apple Mail versions (iPhone, iPad, Mac)
+  - Mozilla Thunderbird versions
+  - Mobile clients (Android Mail, Samsung Email)
+  - Web clients (Gmail, Yahoo, Roundcube)
+  - Professional tools (PHPMailer, SendGrid, Mailgun)
+  - Server software (Sendmail, Exim, Postfix)
+
+**Email Classification Headers:**
+- **X-Origin**: Origin server identification with custom values
+- **X-Email-Type**: Email type classification (Transactional, Marketing, Newsletter, etc.)
+- **X-Campaign-Name**: Campaign naming with placeholder integration
+
+**Priority & Management Headers:**
+- **Auto-Submitted**: auto-generated, auto-replied, no, or random options
+- **Precedence**: bulk, list, junk, normal, or random selection
+- **Priority**: high, normal, low, or random with range configuration
+- **X-Priority**: 1-5 priority levels with descriptions
+- **Importance**: high, normal, low, or random selection
+- **X-Auto-Response-Suppress**: Comprehensive auto-response suppression options
+
+**Unsubscribe Headers:**
+- **List-Unsubscribe**: RFC-compliant unsubscribe with multiple format support
+- **List-Unsubscribe-Post**: One-click unsubscribe (Disable/Enable/Random)
+- **Custom Formats**: Full placeholder support for unsubscribe links
+
+**Custom Header Addition:**
+- **Add More Headers**: Unlimited custom header creation
+- **Custom Configuration**: User-defined header names and values
+- **Placeholder Integration**: Full support for all placeholder types
+- **Individual Rotation**: Per-header rotation and policy configuration
+
+**Advanced Header Policies:**
+- **Header Use Limit**: 
+  - **All**: Use all enabled headers for each email
+  - **Custom**: Minimum/maximum header count per email
+- **Disable Sometimes**: Optional random header omission for detection avoidance
+- **Rotation Patterns**: Each Mail / Custom range rotation for all headers
+- **Policy Options**: Must use / Optional application for each header type
+
+### Sending Modes
+**Single Mode (One-by-One):**
+- **Sequential Sending**: Email sent individually with configurable delays
+- **Delay Configuration**: From/To delay ranges with unit selection (seconds/minutes/hours)
+- **Example**: Delay from 10 seconds to 20 seconds between each email
+- **Precision Control**: Exact timing control for careful delivery patterns
+
+**Batch Mode (Group Sending):**
+- **Batch Size Configuration**: Minimum and maximum batch sizes (e.g., 10-20 emails per batch)
+- **Dynamic Batching**: Random batch sizes within defined ranges
+- **Batch Delays**: Configurable delays between batches with unit selection
+- **Efficient Processing**: Optimized for high-volume sending
+
+**Date & Time Mode (Scheduled Sending):**
+- **Time Window Definition**: From Date/Time and To Date/Time selection with calendars
+- **Send Limit Configuration**: Maximum emails per time window (e.g., 100 emails)
+- **Automatic Calculation**: Tool calculates optimal delays to meet schedule
+- **Multiple Ranges**: Add multiple date/time ranges with individual limits
+- **Coverage Warning**: Alert when configuration won't cover all leads
+
+**Spike Mode (Day-by-Day Planning):**
+- **Daily Limit Planning**: Specify exact email count per day (e.g., Day 1: 100 emails)
+- **Progressive Sending**: Gradually increase daily limits over time
+- **Multi-Day Configuration**: Add unlimited days with individual limits
+- **Automatic Scheduling**: Tool manages 24-hour distribution for each day's limit
+- **Remaining Tracking**: Real-time display of remaining leads after each day's plan
+
+### Campaign Scheduling
+**Schedule Configuration:**
+- **Scheduling Toggle**: Disable/Enable with default disabled state
+- **Date/Time Selection**: Precise scheduling with hours/minutes and AM/PM
+- **Countdown Display**: Real-time countdown to scheduled start time
+- **Immediate Start**: Instant campaign start when scheduling disabled
+
+### Live Status & Controls
+**Real-time Monitoring:**
+- **Live Counters**: 
+  - Total Leads, Subjects, SMTPs, Message Templates
+  - Sent Success/Failed counts with real-time updates
+  - Remaining emails counter
+  - Total Opens/Clicks (when tracking enabled, "Off" when disabled)
+- **Progress Visualization**: Real-time progress bar with completion percentage
+- **Dynamic Updates**: All counters update instantly during campaign execution
+
+**Campaign Controls:**
+- **Start**: Begin campaign execution (respects scheduling if enabled)
+- **Stop**: Complete campaign termination (enabled only after starting)
+- **Pause**: Pause sending without losing progress (enabled only while sending)
+- **Resume**: Continue from exact pause point (enabled only when paused)
+- **Save as Draft**: Preserve configuration and progress for later continuation
+
+**Data Persistence:**
+- **Automatic Saving**: Real-time campaign data and progress preservation
+- **JSON Storage**: All configuration, settings, reports, and status saved as JSON files
+- **Crash Recovery**: Resume campaigns exactly where left off after unexpected closure
+- **Progress Integrity**: Complete counter and data preservation across sessions
+
+### Campaign Reports
+**Comprehensive Reporting:**
+- **Detailed Send Log**: Complete table of all send attempts including:
+  - Send status (success/failed) with error details
+  - SMTP server used for each email
+  - Subject line applied
+  - Headers included
+  - Message template used
+  - Complete lead data for each recipient
+  - Precise date/time stamps
+- **Export Options**: Excel and CSV format exports
+- **Live CSV Reports**: Automatic CSV generation and real-time updates in campaign folder
+- **Data Completeness**: All lead file columns preserved in reports for complete traceability
 
 ## 🔧 Core Modules
 
@@ -815,21 +1096,54 @@ Multiple format support including:
 ### Technical Documentation
 Upon completion, two comprehensive documentation sets will be provided:
 
-#### 1. Compilation Guide
-- **Complete .exe Creation Instructions**: Step-by-step compilation process
-- **Environment Setup**: Dependency and configuration management
-- **Compilation Commands**: Nuitka, PyInstaller, Cython specific instructions
-- **Resource Handling**: Proper bundling of images, themes, and JSON files
-- **Troubleshooting Guide**: Common compilation issues and solutions
-- **Testing Procedures**: Verification of compiled executable functionality
+#### 1. Compilation Guide (Technical)
+**Complete .exe Creation Instructions:**
+- **Step-by-step Compilation Process**: Detailed instructions for creating standalone executable
+- **Environment Setup**: Complete dependency and configuration management
+- **Tool-specific Instructions**: Separate guides for Nuitka, PyInstaller, and Cython compilation
+- **Resource Handling**: Proper bundling of images, themes, JSON files, and fonts
+- **Directory Structure**: Exact folder organization requirements for compilation
+- **Compilation Commands**: Complete command-line instructions with parameters
+- **Troubleshooting Guide**: Common compilation issues and proven solutions
+- **Testing Procedures**: Verification methods for compiled executable functionality
+- **Compatibility Assurance**: Ensuring identical functionality between .py and .exe versions
+- **Resource Path Management**: Handling of external resources in compiled version
 
-#### 2. User Manual
-- **Comprehensive Feature Guide**: Human-readable explanations of all features
-- **Step-by-step Instructions**: Detailed usage procedures
-- **Configuration Examples**: Practical implementation scenarios
-- **Setting Interactions**: How different options affect each other
-- **Best Practices**: Optimal usage recommendations
-- **Troubleshooting**: Common user issues and solutions
+**Critical Requirements:**
+- Ensure no broken buttons, input fields, or functionality after compilation
+- Prevent random closing, freezing, or crashing in compiled version
+- Maintain all GUI responsiveness and thread functionality
+- Preserve all file read/write operations in packaged executable
+
+#### 2. User Manual (Comprehensive)
+**Human-readable Documentation:**
+- **Natural Language Explanations**: Written in conversational, accessible tone
+- **Complete Feature Coverage**: Documentation for every single feature and option
+- **Step-by-step Instructions**: Detailed procedures for all software operations
+- **Practical Examples**: Real-world usage scenarios and implementation guides
+- **Setting Interactions**: Clear explanation of how different options affect each other
+- **Unlock Behavior**: Description of when enabling settings reveals additional options
+
+**Content Organization:**
+- **Feature Accessibility**: Clear instructions on how to access each feature
+- **Click-by-Click Guidance**: Exact UI navigation instructions
+- **Option Explanations**: What happens when specific settings are selected
+- **Configuration Examples**: Practical implementation scenarios for all features
+- **Best Practices**: Optimal usage recommendations for different use cases
+- **Troubleshooting**: Common user issues and step-by-step solutions
+
+**User Experience Focus:**
+- **Non-technical Language**: Avoiding robotic or overly technical explanations
+- **Visual Learning**: Clear descriptions that help users understand interface elements
+- **Workflow Guidance**: Logical progression through software features
+- **Scenario-based Examples**: Practical applications for different email marketing needs
+- **Error Prevention**: Guidance to avoid common mistakes and configuration errors
+
+**Documentation Goals:**
+- Make software fully understandable to non-technical users
+- Provide complete accessibility to all features and capabilities
+- Enable independent operation without additional support
+- Serve as comprehensive reference for all software functionality
 
 ## 🚀 Installation & Development
 
@@ -866,5 +1180,51 @@ Upon completion, two comprehensive documentation sets will be provided:
 - **Error Management**: Comprehensive logging, notifications, retry mechanisms
 - **Queue Optimization**: Efficient handling of high-volume sending
 - **Limit Enforcement**: Automatic SMTP limit monitoring and enforcement
+
+## 📋 Technical Clarifications
+
+### Architecture Decisions
+- **Individual SMTP Storage**: Each SMTP as separate JSON file with complete configuration
+- **Embedded Browser**: CEF/Chromium integration within application (no external windows)
+- **Threading Model**: Individual threads per campaign for complete isolation
+- **Configuration Management**: Both file-based storage and GUI-editable settings with auto-sync
+- **Data Persistence**: Real-time auto-save and manual save options for all user actions
+
+### Email Handling
+- **Direct SMTP Implementation**: Native SMTP protocol handling without external dependencies
+- **Error Management**: Comprehensive logging, user notifications, and customizable retry mechanisms
+- **Queue Optimization**: Efficient handling of high-volume sending with background processing
+- **Limit Enforcement**: Automatic SMTP limit monitoring and enforcement with status management
+
+### File & Storage Management
+- **Storage Location**: All data files stored in same directory as executable
+- **Auto-creation**: Automatic folder/file creation on first run
+- **File Structure**: Organized hierarchy for leads, SMTPs, subjects, templates, campaigns
+- **JSON Configuration**: All settings stored in JSON format for portability and editing
+
+### UI Framework Specifications
+- **PyQt6 Implementation**: Complete application built with PyQt6 framework
+- **QSS Styling**: External QSS files for theme management and customization
+- **Theme Switching**: Runtime theme switching capability from settings
+- **Professional Design**: Commercial-grade interface without emojis
+- **External Icons**: SVG/PNG images with JSON path management system
+
+### Threading Architecture
+- **Multi-Campaign Support**: Each campaign runs in dedicated thread
+- **Non-blocking UI**: All operations on background threads to prevent UI freezing
+- **Campaign Isolation**: Complete independence between campaign operations
+- **Resource Management**: Proper thread management and cleanup
+
+### Error Handling & Reliability
+- **Detailed Logging**: Comprehensive error logging with user-friendly notifications
+- **Retry Mechanisms**: Customizable retry counts and limits configurable via UI
+- **User Notifications**: Clear error messages and status updates within application
+- **Graceful Degradation**: Continue operation when individual components fail
+
+### Compilation Compatibility
+- **Multi-tool Support**: Full compatibility with Nuitka, Cython, and PyInstaller
+- **Resource Bundling**: Proper handling of all external resources in compiled version
+- **Functionality Preservation**: Identical behavior between .py source and compiled .exe
+- **Cross-environment Testing**: Verification across different Windows versions and configurations
 
 This specification ensures DeepMailer v1.0 will be a professional-grade email marketing solution with enterprise-level features, security, and reliability suitable for commercial use.
