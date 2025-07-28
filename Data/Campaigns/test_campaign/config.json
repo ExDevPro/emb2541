@@ -1,0 +1,43 @@
+{
+  "id": "12345678-1234-1234-1234-123456789012",
+  "name": "Test Campaign",
+  "description": "Sample test campaign",
+  "created": "2025-07-28T22:59:19.520619",
+  "modified": "2025-07-28T22:59:19.520623",
+  "status": "draft",
+  "progress": 0,
+  "sent_count": 0,
+  "failed_count": 0,
+  "configuration": {
+    "leads": {
+      "list": "sample_leads.csv (3 leads)",
+      "sequence": "First to Last",
+      "domain_rotation": false
+    },
+    "smtp": {
+      "servers": [
+        "SMTP Server 1"
+      ],
+      "rotation": "Each Mail",
+      "range_min": 10,
+      "range_max": 25
+    },
+    "subjects": {
+      "enabled": true,
+      "lists": [
+        "marketing_subjects.csv"
+      ],
+      "rotation": "Each Time",
+      "range_min": 1,
+      "range_max": 5
+    },
+    "templates": {
+      "lists": [
+        "Welcome Template"
+      ],
+      "rotation": "Each Mail",
+      "range_min": 1,
+      "range_max": 10
+    }
+  }
+}
