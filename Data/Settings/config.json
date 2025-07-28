@@ -1,0 +1,57 @@
+{
+  "theme": "dark",
+  "pagination": {
+    "leads_per_page": 100,
+    "smtp_per_page": 25,
+    "subjects_per_page": 50,
+    "templates_per_page": 25,
+    "campaigns_per_page": 25
+  },
+  "window": {
+    "width": 1200,
+    "height": 800,
+    "maximized": false
+  },
+  "email": {
+    "retry_count": 3,
+    "timeout": 30
+  },
+  "placeholders": {
+    "counter_start": 1,
+    "domains": [
+      "example.com",
+      "mydomain.com",
+      "company.org"
+    ],
+    "campaigns": [
+      "SummerSale2025",
+      "BlackFridayPromo",
+      "WelcomeSeries"
+    ],
+    "batch_names": [
+      "Batch1",
+      "Batch2",
+      "Batch3"
+    ],
+    "custom_strings": [
+      "Custom1",
+      "Custom2",
+      "Custom3"
+    ],
+    "list_names": [
+      "List1",
+      "List2",
+      "List3"
+    ]
+  },
+  "spintext": {
+    "struggling": "struggling|having trouble|facing challenges|finding it hard",
+    "offer": "offer|deal|promotion|special|discount",
+    "business": "business|company|organization|enterprise|firm"
+  },
+  "unsubscribe_formats": [
+    "<mailto:unsubscribe@{{domain}}>",
+    "<https://{{domain}}/unsubscribe?email={email}>",
+    "<https://{{domain}}/unsubscribe/{{token}}>"
+  ]
+}

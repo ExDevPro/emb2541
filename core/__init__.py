@@ -1,0 +1,1 @@
+# Core modules for DeepMailer v1.0
