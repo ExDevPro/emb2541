@@ -71,3 +71,12 @@ Thumbs.db
 *.log
 *.bak
 *.tmp
+
+# DeepMailer user data (uncomment to exclude)
+# Data/Leads/
+# Data/SMTP/
+# Data/Subject/
+# Data/Message/
+# Data/Campaigns/
+# Data/Settings/
+# Data/Logs/
