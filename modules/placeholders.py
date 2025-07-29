@@ -12,14 +12,22 @@ import uuid
 from datetime import datetime
 from typing import Dict, Any, List
 
-from faker import Faker
+# Use built-in data instead of Faker for now
+try:
+    from faker import Faker
+    FAKER_AVAILABLE = True
+except ImportError:
+    FAKER_AVAILABLE = False
 
 class PlaceholderEngine:
     """Engine for processing all types of placeholders"""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.faker = Faker()
+        if FAKER_AVAILABLE:
+            self.faker = Faker()
+        else:
+            self.faker = None
         self.counter = 1
         self.config = {}
         
@@ -29,89 +37,118 @@ class PlaceholderEngine:
         
     def _init_faker_placeholders(self):
         """Initialize Faker-based placeholders"""
-        self.faker_placeholders = {
-            # Personal Data
-            'FakerFirstName': lambda: self.faker.first_name(),
-            'FakerLastName': lambda: self.faker.last_name(),
-            'FakerFullName': lambda: self.faker.name(),
-            'FakerGender': lambda: random.choice(['Male', 'Female']),
-            'FakerEmail': lambda: self.faker.email(),
-            'FakerUsername': lambda: self.faker.user_name(),
-            'FakerPassword': lambda: self.faker.password(),
+        if FAKER_AVAILABLE and self.faker:
+            self.faker_placeholders = {
+                # Personal Data
+                'FakerFirstName': lambda: self.faker.first_name(),
+                'FakerLastName': lambda: self.faker.last_name(),
+                'FakerFullName': lambda: self.faker.name(),
+                'FakerGender': lambda: random.choice(['Male', 'Female']),
+                'FakerEmail': lambda: self.faker.email(),
+                'FakerUsername': lambda: self.faker.user_name(),
+                'FakerPassword': lambda: self.faker.password(),
+                
+                # Company & Professional
+                'FakerCompany': lambda: self.faker.company(),
+                'FakerCompanySuffix': lambda: self.faker.company_suffix(),
+                'FakerJobTitle': lambda: self.faker.job(),
+                
+                # Contact Information
+                'FakerPhone': lambda: self.faker.phone_number(),
+                'FakerPhoneNumber': lambda: self.faker.phone_number(),
+            }
+        else:
+            # Fallback placeholders without Faker
+            sample_names = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Lisa', 'Robert', 'Emma']
+            sample_last_names = ['Smith', 'Johnson', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor']
+            sample_companies = ['Tech Corp', 'Innovation Inc', 'Global Solutions', 'Future Systems', 'Digital Ventures']
+            sample_cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia']
+            sample_states = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA']
+            sample_countries = ['United States', 'Canada', 'United Kingdom', 'Germany', 'France', 'Australia']
             
-            # Company & Professional
-            'FakerCompany': lambda: self.faker.company(),
-            'FakerCompanySuffix': lambda: self.faker.company_suffix(),
-            'FakerJobTitle': lambda: self.faker.job(),
-            
-            # Contact Information
-            'FakerPhone': lambda: self.faker.phone_number(),
-            'FakerPhoneNumber': lambda: self.faker.phone_number(),
-            
-            # Location Data
-            'FakerCity': lambda: self.faker.city(),
-            'FakerState': lambda: self.faker.state(),
-            'FakerCountry': lambda: self.faker.country(),
-            'FakerCountryCode': lambda: self.faker.country_code(),
-            'FakerAddress': lambda: self.faker.address(),
-            'FakerStreetName': lambda: self.faker.street_name(),
-            'FakerStreetAddress': lambda: self.faker.street_address(),
-            'FakerBuildingNumber': lambda: self.faker.building_number(),
-            'FakerPostcode': lambda: self.faker.postcode(),
-            'FakerLatitude': lambda: str(self.faker.latitude()),
-            'FakerLongitude': lambda: str(self.faker.longitude()),
-            
-            # Date & Time
-            'FakerDate': lambda: self.faker.date(),
-            'FakerTime': lambda: self.faker.time(),
-            'FakerDateTime': lambda: self.faker.date_time().strftime('%Y-%m-%d %H:%M:%S'),
-            'FakerDayOfWeek': lambda: self.faker.day_name(),
-            'FakerMonthName': lambda: self.faker.month_name(),
-            'FakerYear': lambda: str(self.faker.year()),
-            
-            # Internet & Technology
-            'FakerUrl': lambda: self.faker.url(),
-            'FakerUUID': lambda: self.faker.uuid4(),
-            'FakerUserAgent': lambda: self.faker.user_agent(),
-            'FakerIPv4': lambda: self.faker.ipv4(),
-            'FakerIPv6': lambda: self.faker.ipv6(),
-            'FakerMACAddress': lambda: self.faker.mac_address(),
-            
-            # Design & Content
-            'FakerColor': lambda: self.faker.color_name(),
-            'FakerHexColor': lambda: self.faker.hex_color(),
-            'FakerSlug': lambda: self.faker.slug(),
-            
-            # Localization
-            'FakerLocale': lambda: self.faker.locale(),
-            'FakerTimezone': lambda: str(self.faker.timezone()),
-            'FakerLanguageCode': lambda: self.faker.language_code(),
-            
-            # Financial
-            'FakerCurrencyCode': lambda: self.faker.currency_code(),
-            'FakerIBAN': lambda: self.faker.iban(),
-            'FakerBIC': lambda: self.faker.swift(),
-            
-            # Email Types
-            'FakerAsciiSafeEmail': lambda: self.faker.ascii_safe_email(),
-            'FakerFreeEmail': lambda: self.faker.free_email(),
-            'FakerSafeEmail': lambda: self.faker.safe_email(),
-            
-            # Data & Boolean
-            'FakerBoolean': lambda: str(self.faker.boolean()),
-            
-            # Text Generation
-            'FakerWord': lambda: self.faker.word(),
-            'FakerWords': lambda: ' '.join(self.faker.words(3)),
-            'FakerSentence': lambda: self.faker.sentence(),
-            'FakerParagraph': lambda: self.faker.paragraph(),
-            'FakerText': lambda: self.faker.text(200),
-            
-            # Numbers
-            'FakerRandomNumber': lambda: str(self.faker.random_int(min=1, max=9999)),
-            'FakerDigit': lambda: str(self.faker.random_digit()),
-            'FakerNumberBetween': lambda: str(self.faker.random_int(min=1, max=100)),
-        }
+            self.faker_placeholders = {
+                # Personal Data  
+                'FakerFirstName': lambda: random.choice(sample_names),
+                'FakerLastName': lambda: random.choice(sample_last_names),
+                'FakerFullName': lambda: f"{random.choice(sample_names)} {random.choice(sample_last_names)}",
+                'FakerGender': lambda: random.choice(['Male', 'Female']),
+                'FakerEmail': lambda: f"{random.choice(sample_names).lower()}.{random.choice(sample_last_names).lower()}@example.com",
+                'FakerUsername': lambda: f"user{random.randint(1000, 9999)}",
+                'FakerPassword': lambda: f"pass{random.randint(1000, 9999)}",
+                
+                # Company & Professional
+                'FakerCompany': lambda: random.choice(sample_companies),
+                'FakerCompanySuffix': lambda: random.choice(['Inc', 'Corp', 'LLC', 'Ltd']),
+                'FakerJobTitle': lambda: random.choice(['Manager', 'Developer', 'Analyst', 'Director', 'Specialist']),
+                
+                # Contact Information
+                'FakerPhone': lambda: f"+1-555-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
+                'FakerPhoneNumber': lambda: f"+1-555-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
+                
+                # Location Data
+                'FakerCity': lambda: random.choice(sample_cities),
+                'FakerState': lambda: random.choice(sample_states),
+                'FakerCountry': lambda: random.choice(sample_countries),
+                'FakerCountryCode': lambda: random.choice(['US', 'CA', 'UK', 'DE', 'FR', 'AU']),
+                'FakerAddress': lambda: f"{random.randint(100, 999)} Main St",
+                'FakerStreetName': lambda: random.choice(['Main St', 'Oak Ave', 'First St', 'Second Ave']),
+                'FakerStreetAddress': lambda: f"{random.randint(100, 999)} {random.choice(['Main St', 'Oak Ave'])}",
+                'FakerBuildingNumber': lambda: str(random.randint(1, 999)),
+                'FakerPostcode': lambda: f"{random.randint(10000, 99999)}",
+                'FakerLatitude': lambda: f"{random.uniform(-90, 90):.6f}",
+                'FakerLongitude': lambda: f"{random.uniform(-180, 180):.6f}",
+                
+                # Date & Time
+                'FakerDate': lambda: datetime.now().strftime('%Y-%m-%d'),
+                'FakerTime': lambda: datetime.now().strftime('%H:%M:%S'),
+                'FakerDateTime': lambda: datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'FakerDayOfWeek': lambda: datetime.now().strftime('%A'),
+                'FakerMonthName': lambda: datetime.now().strftime('%B'),
+                'FakerYear': lambda: str(datetime.now().year),
+                
+                # Internet & Technology
+                'FakerUrl': lambda: f"https://example{random.randint(1, 100)}.com",
+                'FakerUUID': lambda: str(uuid.uuid4()),
+                'FakerUserAgent': lambda: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'FakerIPv4': lambda: f"{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}.{random.randint(1, 255)}",
+                'FakerIPv6': lambda: '2001:db8::1',
+                'FakerMACAddress': lambda: ':'.join([f"{random.randint(0, 255):02x}" for _ in range(6)]),
+                
+                # Design & Content
+                'FakerColor': lambda: random.choice(['red', 'blue', 'green', 'yellow', 'purple', 'orange']),
+                'FakerHexColor': lambda: f"#{random.randint(0, 16777215):06x}",
+                'FakerSlug': lambda: f"sample-slug-{random.randint(1, 1000)}",
+                
+                # Localization
+                'FakerLocale': lambda: random.choice(['en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES']),
+                'FakerTimezone': lambda: random.choice(['UTC', 'EST', 'PST', 'GMT', 'CET']),
+                'FakerLanguageCode': lambda: random.choice(['en', 'fr', 'de', 'es', 'it']),
+                
+                # Financial
+                'FakerCurrencyCode': lambda: random.choice(['USD', 'EUR', 'GBP', 'CAD', 'AUD']),
+                'FakerIBAN': lambda: f"GB{random.randint(10, 99)} ABCD {random.randint(1000, 9999)} {random.randint(1000, 9999)} {random.randint(10, 99)}",
+                'FakerBIC': lambda: f"ABCD{random.choice(['US', 'GB', 'DE'])}XX",
+                
+                # Email Types
+                'FakerAsciiSafeEmail': lambda: f"user{random.randint(1, 999)}@example.com",
+                'FakerFreeEmail': lambda: f"user{random.randint(1, 999)}@{random.choice(['gmail.com', 'yahoo.com', 'hotmail.com'])}",
+                'FakerSafeEmail': lambda: f"user{random.randint(1, 999)}@example.org",
+                
+                # Data & Boolean
+                'FakerBoolean': lambda: random.choice(['true', 'false']),
+                
+                # Text Generation
+                'FakerWord': lambda: random.choice(['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur']),
+                'FakerWords': lambda: ' '.join(random.choices(['lorem', 'ipsum', 'dolor', 'sit', 'amet'], k=3)),
+                'FakerSentence': lambda: 'Lorem ipsum dolor sit amet consectetur.',
+                'FakerParagraph': lambda: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.',
+                'FakerText': lambda: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                
+                # Numbers
+                'FakerRandomNumber': lambda: str(random.randint(1, 9999)),
+                'FakerDigit': lambda: str(random.randint(0, 9)),
+                'FakerNumberBetween': lambda: str(random.randint(1, 100)),
+            }
         
     def _init_system_placeholders(self):
         """Initialize system placeholders"""
@@ -374,3 +411,34 @@ class PlaceholderEngine:
     def test_placeholder(self, placeholder: str, lead_data: Dict[str, str] = None) -> str:
         """Test a placeholder and return its generated value"""
         return self.process_placeholder(placeholder, lead_data)
+
+class PlaceholderManager:
+    """Manager class for placeholder operations"""
+    
+    def __init__(self):
+        self.engine = PlaceholderEngine()
+        self.logger = logging.getLogger(__name__)
+    
+    def get_all_placeholders(self) -> Dict[str, Any]:
+        """Get all available placeholders organized by category"""
+        try:
+            return self.engine.get_available_placeholders()
+        except Exception as e:
+            self.logger.error(f"Error getting placeholders: {e}")
+            return {}
+    
+    def process_text(self, text: str, lead_data: Dict[str, str] = None) -> str:
+        """Process text with placeholders"""
+        try:
+            return self.engine.process_all(text, lead_data)
+        except Exception as e:
+            self.logger.error(f"Error processing text: {e}")
+            return text
+    
+    def test_placeholder(self, placeholder: str, lead_data: Dict[str, str] = None) -> str:
+        """Test a placeholder and return its generated value"""
+        try:
+            return self.engine.test_placeholder(placeholder, lead_data)
+        except Exception as e:
+            self.logger.error(f"Error testing placeholder: {e}")
+            return f"Error: {e}"

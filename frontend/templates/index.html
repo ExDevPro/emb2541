@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepMailer v1.0 - Professional Email Marketing Software</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/css/themes.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+</head>
+<body class="theme-dark">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <h2>DeepMailer v1.0</h2>
+                <div class="loading-spinner"></div>
+            </div>
+            <p>Loading Professional Email Marketing Software...</p>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="app-container" style="display: none;">
+        
+        <!-- Left Navigation Panel -->
+        <div class="left-panel">
+            <div class="app-header">
+                <div class="app-logo">
+                    <h3>DeepMailer v1.0</h3>
+                    <span class="version">Professional</span>
+                </div>
+            </div>
+            
+            <nav class="navigation-menu">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-module="dashboard">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="leads">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Leads</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="smtp">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-envelope-open"></i>
+                            <span>SMTPs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="subjects">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-edit"></i>
+                            <span>Subjects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="messages">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Messages</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="campaigns">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-rocket"></i>
+                            <span>Campaigns</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="configurations">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cogs"></i>
+                            <span>Configurations</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-module="settings">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="app-footer">
+                <div class="connection-status" id="connection-status">
+                    <i class="fas fa-circle text-success"></i>
+                    <span>Connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content Panel -->
+        <div class="right-panel">
+            <div class="content-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline-primary btn-sm" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <div class="theme-toggle">
+                        <button class="btn btn-outline-secondary btn-sm" id="theme-toggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-body" id="content-area">
+                <!-- Dynamic content will be loaded here -->
+                
+                <!-- Dashboard Content (Default) -->
+                <div id="dashboard-content" class="module-content active">
+                    
+                    <!-- Real-time Statistics Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-users text-primary"></i>
+                                <h3>Total Leads</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="total-leads">0</span>
+                                <small class="text-muted">across all lists</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-envelope text-success"></i>
+                                <h3>Valid Emails</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="valid-emails">0</span>
+                                <small class="text-muted">verified addresses</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-server text-info"></i>
+                                <h3>SMTP Servers</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="smtp-total">0</span>
+                                <small class="text-muted"><span id="smtp-active">0</span> active</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-file-alt text-warning"></i>
+                                <h3>Templates</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="templates-total">0</span>
+                                <small class="text-muted">message templates</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-rocket text-purple"></i>
+                                <h3>Active Campaigns</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="campaigns-active">0</span>
+                                <small class="text-muted">running now</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="fas fa-paper-plane text-success"></i>
+                                <h3>Emails Sent</h3>
+                            </div>
+                            <div class="stat-value">
+                                <span id="emails-sent">0</span>
+                                <small class="text-muted">successful deliveries</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campaign Status Section -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h4><i class="fas fa-chart-line"></i> Campaign Performance</h4>
+                            <button class="btn btn-outline-primary btn-sm" id="view-campaigns">
+                                View All Campaigns
+                            </button>
+                        </div>
+                        
+                        <div class="campaign-performance">
+                            <div class="performance-chart">
+                                <canvas id="performance-chart" width="400" height="200"></canvas>
+                            </div>
+                            
+                            <div class="performance-stats">
+                                <div class="performance-stat">
+                                    <div class="stat-label">Success Rate</div>
+                                    <div class="stat-value text-success">
+                                        <span id="success-rate">0%</span>
+                                    </div>
+                                </div>
+                                <div class="performance-stat">
+                                    <div class="stat-label">Failed Emails</div>
+                                    <div class="stat-value text-danger">
+                                        <span id="emails-failed">0</span>
+                                    </div>
+                                </div>
+                                <div class="performance-stat">
+                                    <div class="stat-label">Queue Remaining</div>
+                                    <div class="stat-value text-info">
+                                        <span id="queue-remaining">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button class="btn btn-primary" data-action="new-campaign">
+                                <i class="fas fa-plus"></i> New Campaign
+                            </button>
+                            <button class="btn btn-success" data-action="import-leads">
+                                <i class="fas fa-upload"></i> Import Leads
+                            </button>
+                            <button class="btn btn-info" data-action="add-smtp">
+                                <i class="fas fa-server"></i> Add SMTP
+                            </button>
+                            <button class="btn btn-warning" data-action="create-template">
+                                <i class="fas fa-file-plus"></i> Create Template
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h4><i class="fas fa-history"></i> Recent Activity</h4>
+                        </div>
+                        
+                        <div class="activity-list" id="recent-activity">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-info-circle text-info"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Welcome to DeepMailer v1.0</div>
+                                    <div class="activity-time">Application started</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other module contents will be loaded dynamically -->
+                <div id="leads-content" class="module-content"></div>
+                <div id="smtp-content" class="module-content"></div>
+                <div id="subjects-content" class="module-content"></div>
+                <div id="messages-content" class="module-content"></div>
+                <div id="campaigns-content" class="module-content"></div>
+                <div id="configurations-content" class="module-content"></div>
+                <div id="settings-content" class="module-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/socket.io.min.js"></script>
+    <script src="/static/js/chart.min.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/navigation.js"></script>
+    <script src="/static/js/modules/leads.js"></script>
+    <script src="/static/js/modules/smtp.js"></script>
+    <script src="/static/js/modules/subjects.js"></script>
+    <script src="/static/js/modules/messages.js"></script>
+    <script src="/static/js/modules/campaigns.js"></script>
+    <script src="/static/js/modules/configurations.js"></script>
+    <script src="/static/js/modules/settings.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

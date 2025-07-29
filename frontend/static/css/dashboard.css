@@ -1,0 +1,13 @@
+/* Dashboard specific styles */
+.dashboard-section {
+    margin-bottom: 2rem;
+}
+
+.quick-actions .btn {
+    margin: 0.5rem;
+}
+
+.performance-chart canvas {
+    max-width: 100%;
+    height: auto;
+}
