@@ -94,7 +94,7 @@ class SMTPConfigDialog(QDialog):
         
         # Title
         title = QLabel("SMTP Server Configuration")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        title.setObjectName("section-title")
         layout.addWidget(title)
         
         # Create tab widget

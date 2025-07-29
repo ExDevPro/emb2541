@@ -386,6 +386,143 @@ class DataManager:
         self._set_cache(cache_key, total)
         return total
         
+    def get_total_smtp_servers(self) -> int:
+        """Get total number of SMTP servers"""
+        cache_key = self._get_cache_key("total_smtp")
+        cached = self._get_cache(cache_key)
+        if cached is not None:
+            return cached
+            
+        smtp_dir = get_data_path('smtp')
+        count = len(list(smtp_dir.glob("*.json")))
+        
+        self._set_cache(cache_key, count)
+        return count
+        
+    def get_total_templates(self) -> int:
+        """Get total number of message templates"""
+        cache_key = self._get_cache_key("total_templates")
+        cached = self._get_cache(cache_key)
+        if cached is not None:
+            return cached
+            
+        message_dir = get_data_path('message')
+        count = len([d for d in message_dir.iterdir() if d.is_dir()])
+        
+        self._set_cache(cache_key, count)
+        return count
+        
+    def get_total_campaigns(self) -> int:
+        """Get total number of campaigns"""
+        cache_key = self._get_cache_key("total_campaigns")
+        cached = self._get_cache(cache_key)
+        if cached is not None:
+            return cached
+            
+        campaigns_dir = get_data_path('campaigns')
+        count = len([d for d in campaigns_dir.iterdir() if d.is_dir()])
+        
+        self._set_cache(cache_key, count)
+        return count
+        
+    def get_campaign_statistics(self) -> Dict[str, int]:
+        """Get campaign statistics"""
+        cache_key = self._get_cache_key("campaign_stats")
+        cached = self._get_cache(cache_key)
+        if cached is not None:
+            return cached
+            
+        campaigns_dir = get_data_path('campaigns')
+        stats = {
+            'total': 0,
+            'active': 0,
+            'draft': 0,
+            'completed': 0,
+            'paused': 0,
+            'failed': 0,
+            'running': 0,
+            'sent': 0,
+            'failed_emails': 0,
+            'remaining': 0
+        }
+        
+        for campaign_dir in campaigns_dir.iterdir():
+            if campaign_dir.is_dir():
+                config_file = campaign_dir / 'config.json'
+                if config_file.exists():
+                    try:
+                        with open(config_file, 'r', encoding='utf-8') as f:
+                            campaign_data = json.load(f)
+                            
+                        stats['total'] += 1
+                        status = campaign_data.get('status', 'draft')
+                        if status in stats:
+                            stats[status] += 1
+                        else:
+                            stats[status] = 1
+                        
+                        # Add sent/failed counts
+                        stats['sent'] += campaign_data.get('sent_count', 0)
+                        stats['failed_emails'] += campaign_data.get('failed_count', 0)
+                        
+                    except Exception as e:
+                        self.logger.error(f"Error reading campaign {campaign_dir}: {e}")
+                        
+        self._set_cache(cache_key, stats)
+        return stats
+        
+    def get_tracking_statistics(self) -> Dict[str, Any]:
+        """Get tracking statistics"""
+        # Placeholder for tracking stats
+        return {
+            'enabled': False,
+            'opens': 0,
+            'clicks': 0,
+            'unique_opens': 0,
+            'unique_clicks': 0
+        }
+        
+    def get_system_statistics(self) -> Dict[str, Any]:
+        """Get system statistics"""
+        import threading
+        
+        try:
+            # Try to get memory usage if psutil is available
+            try:
+                import psutil
+                memory_percent = psutil.virtual_memory().percent
+                memory_status = "Normal"
+                if memory_percent > 80:
+                    memory_status = "High"
+                elif memory_percent > 90:
+                    memory_status = "Critical"
+            except ImportError:
+                memory_status = "Unknown"
+                memory_percent = 0
+                
+            # Get thread count
+            thread_count = threading.active_count()
+            
+            # Get error count (would be from log files in real implementation)
+            error_count = 0
+            
+            return {
+                'memory': memory_status,
+                'memory_percent': memory_percent,
+                'threads': thread_count,
+                'errors': error_count,
+                'uptime': 'N/A'
+            }
+        except Exception as e:
+            # Fallback for any errors
+            return {
+                'memory': 'Unknown',
+                'memory_percent': 0,
+                'threads': threading.active_count(),
+                'errors': 0,
+                'uptime': 'N/A'
+            }
+        
     # Template Management
     def get_templates(self) -> List[Dict[str, Any]]:
         """Get all message templates"""

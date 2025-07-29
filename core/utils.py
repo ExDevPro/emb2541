@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional
 
 # Default configuration
 DEFAULT_CONFIG = {
-    "theme": "dark",
+    "theme": "professional",
     "pagination": {
         "leads_per_page": 100,
         "smtp_per_page": 25,

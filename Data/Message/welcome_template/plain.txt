@@ -1,0 +1,13 @@
+Welcome {first_name}!
+
+Hi {first_name} {last_name},
+
+Welcome to our platform! We're excited to have {company} join us.
+
+Your email: {email}
+
+Best regards,
+{{FakerFirstName}} {{FakerLastName}}
+{{FakerCompany}}
+
+Unsubscribe: {{unsubscribe}}
