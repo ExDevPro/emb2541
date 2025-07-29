@@ -1,0 +1,33 @@
+/* FontAwesome CSS Placeholder */
+.fas, .fa { font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+
+/* Common icons - using Unicode fallbacks */
+.fa-chart-pie:before { content: "📊"; }
+.fa-users:before { content: "👥"; }
+.fa-envelope-open:before { content: "✉️"; }
+.fa-edit:before { content: "✏️"; }
+.fa-file-alt:before { content: "📄"; }
+.fa-rocket:before { content: "🚀"; }
+.fa-cogs:before { content: "⚙️"; }
+.fa-sliders-h:before { content: "🎛️"; }
+.fa-sync-alt:before { content: "🔄"; }
+.fa-moon:before { content: "🌙"; }
+.fa-sun:before { content: "☀️"; }
+.fa-circle:before { content: "●"; }
+.fa-envelope:before { content: "✉️"; }
+.fa-server:before { content: "🖥️"; }
+.fa-paper-plane:before { content: "📧"; }
+.fa-chart-line:before { content: "📈"; }
+.fa-bolt:before { content: "⚡"; }
+.fa-plus:before { content: "+"; }
+.fa-upload:before { content: "⬆️"; }
+.fa-file-plus:before { content: "📄+"; }
+.fa-history:before { content: "🕒"; }
+.fa-info-circle:before { content: "ℹ️"; }
+
+.text-primary { color: #007bff !important; }
+.text-success { color: #28a745 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #17a2b8 !important; }
+.text-muted { color: #6c757d !important; }

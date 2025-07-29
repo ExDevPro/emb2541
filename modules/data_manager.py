@@ -14,8 +14,9 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 
-import pandas as pd
-import openpyxl
+# Remove pandas and openpyxl imports for now
+# import pandas as pd
+# import openpyxl
 
 from core.utils import (
     get_data_path, safe_filename, load_json_file, 
@@ -51,6 +52,449 @@ class DataManager:
         if self._is_cache_valid(key):
             return self._cache[key][1]
         return None
+    
+    # Dashboard Statistics Methods
+    def count_total_leads(self) -> int:
+        """Count total leads across all lists"""
+        try:
+            leads_dir = get_data_path('leads')
+            total = 0
+            for file_path in leads_dir.glob("*.csv"):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        reader = csv.reader(f)
+                        row_count = sum(1 for row in reader) - 1  # Exclude header
+                        total += max(0, row_count)
+                except Exception as e:
+                    self.logger.error(f"Error counting leads in {file_path}: {e}")
+            return total
+        except Exception as e:
+            self.logger.error(f"Error counting total leads: {e}")
+            return 0
+    
+    def count_valid_emails(self) -> int:
+        """Count valid emails across all lists"""
+        try:
+            leads_dir = get_data_path('leads')
+            valid_count = 0
+            for file_path in leads_dir.glob("*.csv"):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        reader = csv.DictReader(f)
+                        for row in reader:
+                            # Find email column (case insensitive)
+                            email = None
+                            for key, value in row.items():
+                                if key.lower() in ['email', 'e-mail', 'mail']:
+                                    email = value
+                                    break
+                            if email and validate_email(email):
+                                valid_count += 1
+                except Exception as e:
+                    self.logger.error(f"Error validating emails in {file_path}: {e}")
+            return valid_count
+        except Exception as e:
+            self.logger.error(f"Error counting valid emails: {e}")
+            return 0
+    
+    def count_lead_lists(self) -> int:
+        """Count number of lead lists"""
+        try:
+            leads_dir = get_data_path('leads')
+            return len(list(leads_dir.glob("*.csv")))
+        except Exception as e:
+            self.logger.error(f"Error counting lead lists: {e}")
+            return 0
+    
+    def count_smtp_servers(self) -> int:
+        """Count total SMTP servers"""
+        try:
+            smtp_dir = get_data_path('smtp')
+            return len(list(smtp_dir.glob("*.json")))
+        except Exception as e:
+            self.logger.error(f"Error counting SMTP servers: {e}")
+            return 0
+    
+    def count_active_smtps(self) -> int:
+        """Count active SMTP servers"""
+        try:
+            smtp_dir = get_data_path('smtp')
+            active_count = 0
+            for file_path in smtp_dir.glob("*.json"):
+                try:
+                    smtp_data = load_json_file(file_path)
+                    if smtp_data.get('status') == 'active':
+                        active_count += 1
+                except Exception as e:
+                    self.logger.error(f"Error reading SMTP file {file_path}: {e}")
+            return active_count
+        except Exception as e:
+            self.logger.error(f"Error counting active SMTPs: {e}")
+            return 0
+    
+    def count_inactive_smtps(self) -> int:
+        """Count inactive SMTP servers"""
+        return self.count_smtp_servers() - self.count_active_smtps()
+    
+    def count_total_subjects(self) -> int:
+        """Count total subjects across all lists"""
+        try:
+            subject_dir = get_data_path('subject')
+            total = 0
+            for file_path in subject_dir.glob("*.csv"):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        reader = csv.reader(f)
+                        row_count = sum(1 for row in reader) - 1  # Exclude header
+                        total += max(0, row_count)
+                except Exception as e:
+                    self.logger.error(f"Error counting subjects in {file_path}: {e}")
+            return total
+        except Exception as e:
+            self.logger.error(f"Error counting total subjects: {e}")
+            return 0
+    
+    def count_subject_lists(self) -> int:
+        """Count number of subject lists"""
+        try:
+            subject_dir = get_data_path('subject')
+            return len(list(subject_dir.glob("*.csv")))
+        except Exception as e:
+            self.logger.error(f"Error counting subject lists: {e}")
+            return 0
+    
+    def count_message_templates(self) -> int:
+        """Count message templates"""
+        try:
+            message_dir = get_data_path('message')
+            return len([d for d in message_dir.iterdir() if d.is_dir()])
+        except Exception as e:
+            self.logger.error(f"Error counting message templates: {e}")
+            return 0
+    
+    def count_templates_with_attachments(self) -> int:
+        """Count templates with attachments"""
+        try:
+            message_dir = get_data_path('message')
+            count = 0
+            for template_dir in message_dir.iterdir():
+                if template_dir.is_dir():
+                    attachments_dir = template_dir / 'attachments'
+                    if attachments_dir.exists() and any(attachments_dir.iterdir()):
+                        count += 1
+            return count
+        except Exception as e:
+            self.logger.error(f"Error counting templates with attachments: {e}")
+            return 0
+    
+    def count_total_campaigns(self) -> int:
+        """Count total campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            return len([d for d in campaigns_dir.iterdir() if d.is_dir()])
+        except Exception as e:
+            self.logger.error(f"Error counting total campaigns: {e}")
+            return 0
+    
+    def count_active_campaigns(self) -> int:
+        """Count active campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            active_count = 0
+            for campaign_dir in campaigns_dir.iterdir():
+                if campaign_dir.is_dir():
+                    status_file = campaign_dir / 'status.json'
+                    if status_file.exists():
+                        try:
+                            status_data = load_json_file(status_file)
+                            if status_data.get('status') in ['running', 'active', 'sending']:
+                                active_count += 1
+                        except Exception as e:
+                            self.logger.error(f"Error reading campaign status {status_file}: {e}")
+            return active_count
+        except Exception as e:
+            self.logger.error(f"Error counting active campaigns: {e}")
+            return 0
+    
+    def count_completed_campaigns(self) -> int:
+        """Count completed campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            completed_count = 0
+            for campaign_dir in campaigns_dir.iterdir():
+                if campaign_dir.is_dir():
+                    status_file = campaign_dir / 'status.json'
+                    if status_file.exists():
+                        try:
+                            status_data = load_json_file(status_file)
+                            if status_data.get('status') in ['completed', 'finished', 'done']:
+                                completed_count += 1
+                        except Exception as e:
+                            self.logger.error(f"Error reading campaign status {status_file}: {e}")
+            return completed_count
+        except Exception as e:
+            self.logger.error(f"Error counting completed campaigns: {e}")
+            return 0
+    
+    def count_total_emails_sent(self) -> int:
+        """Count total emails sent across all campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            total_sent = 0
+            for campaign_dir in campaigns_dir.iterdir():
+                if campaign_dir.is_dir():
+                    stats_file = campaign_dir / 'stats.json'
+                    if stats_file.exists():
+                        try:
+                            stats_data = load_json_file(stats_file)
+                            total_sent += stats_data.get('emails_sent', 0)
+                        except Exception as e:
+                            self.logger.error(f"Error reading campaign stats {stats_file}: {e}")
+            return total_sent
+        except Exception as e:
+            self.logger.error(f"Error counting total emails sent: {e}")
+            return 0
+    
+    def count_total_emails_failed(self) -> int:
+        """Count total emails failed across all campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            total_failed = 0
+            for campaign_dir in campaigns_dir.iterdir():
+                if campaign_dir.is_dir():
+                    stats_file = campaign_dir / 'stats.json'
+                    if stats_file.exists():
+                        try:
+                            stats_data = load_json_file(stats_file)
+                            total_failed += stats_data.get('emails_failed', 0)
+                        except Exception as e:
+                            self.logger.error(f"Error reading campaign stats {stats_file}: {e}")
+            return total_failed
+        except Exception as e:
+            self.logger.error(f"Error counting total emails failed: {e}")
+            return 0
+    
+    # Data retrieval methods
+    def get_lead_lists(self) -> List[Dict[str, Any]]:
+        """Get all lead lists with metadata"""
+        try:
+            leads_dir = get_data_path('leads')
+            lists = []
+            
+            for file_path in leads_dir.glob("*.csv"):
+                try:
+                    # Get file info
+                    stats = file_path.stat()
+                    
+                    # Count rows
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        reader = csv.reader(f)
+                        row_count = sum(1 for row in reader) - 1  # Exclude header
+                        
+                    list_info = {
+                        'name': file_path.stem,
+                        'filename': file_path.name,
+                        'path': str(file_path),
+                        'row_count': max(0, row_count),
+                        'created': datetime.fromtimestamp(stats.st_ctime).isoformat(),
+                        'modified': datetime.fromtimestamp(stats.st_mtime).isoformat(),
+                        'size': stats.st_size
+                    }
+                    lists.append(list_info)
+                    
+                except Exception as e:
+                    self.logger.error(f"Error reading leads list {file_path}: {e}")
+                    
+            # Sort by modified date (newest first)
+            lists.sort(key=lambda x: x['modified'], reverse=True)
+            return lists
+        except Exception as e:
+            self.logger.error(f"Error getting lead lists: {e}")
+            return []
+    
+    def get_leads(self, list_name: str, page: int = 1, per_page: int = 100, search: str = "") -> Dict[str, Any]:
+        """Get leads from specific list with pagination"""
+        try:
+            leads_dir = get_data_path('leads')
+            file_path = leads_dir / f"{list_name}.csv"
+            
+            if not file_path.exists():
+                return {'leads': [], 'total': 0, 'page': page, 'per_page': per_page}
+            
+            leads = []
+            headers = []
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                headers = reader.fieldnames or []
+                
+                for row in reader:
+                    # Apply search filter
+                    if search:
+                        if not any(search.lower() in str(value).lower() for value in row.values()):
+                            continue
+                    leads.append(row)
+            
+            # Apply pagination
+            total = len(leads)
+            start = (page - 1) * per_page
+            end = start + per_page
+            paginated_leads = leads[start:end]
+            
+            return {
+                'leads': paginated_leads,
+                'headers': headers,
+                'total': total,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': (total + per_page - 1) // per_page
+            }
+        except Exception as e:
+            self.logger.error(f"Error getting leads from {list_name}: {e}")
+            return {'leads': [], 'total': 0, 'page': page, 'per_page': per_page}
+    
+    def get_smtp_servers(self) -> List[Dict[str, Any]]:
+        """Get all SMTP server configurations"""
+        try:
+            smtp_dir = get_data_path('smtp')
+            servers = []
+            
+            for file_path in smtp_dir.glob("*.json"):
+                try:
+                    server_data = load_json_file(file_path)
+                    servers.append(server_data)
+                except Exception as e:
+                    self.logger.error(f"Error reading SMTP file {file_path}: {e}")
+            
+            return servers
+        except Exception as e:
+            self.logger.error(f"Error getting SMTP servers: {e}")
+            return []
+    
+    def get_subject_lists(self) -> List[Dict[str, Any]]:
+        """Get all subject lists with metadata"""
+        try:
+            subject_dir = get_data_path('subject')
+            lists = []
+            
+            for file_path in subject_dir.glob("*.csv"):
+                try:
+                    # Get file info
+                    stats = file_path.stat()
+                    
+                    # Count rows
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        reader = csv.reader(f)
+                        row_count = sum(1 for row in reader) - 1  # Exclude header
+                        
+                    list_info = {
+                        'name': file_path.stem,
+                        'filename': file_path.name,
+                        'path': str(file_path),
+                        'row_count': max(0, row_count),
+                        'created': datetime.fromtimestamp(stats.st_ctime).isoformat(),
+                        'modified': datetime.fromtimestamp(stats.st_mtime).isoformat(),
+                        'size': stats.st_size
+                    }
+                    lists.append(list_info)
+                    
+                except Exception as e:
+                    self.logger.error(f"Error reading subject list {file_path}: {e}")
+                    
+            # Sort by modified date (newest first)
+            lists.sort(key=lambda x: x['modified'], reverse=True)
+            return lists
+        except Exception as e:
+            self.logger.error(f"Error getting subject lists: {e}")
+            return []
+    
+    def get_message_templates(self) -> List[Dict[str, Any]]:
+        """Get all message templates"""
+        try:
+            message_dir = get_data_path('message')
+            templates = []
+            
+            for template_dir in message_dir.iterdir():
+                if template_dir.is_dir():
+                    try:
+                        metadata_file = template_dir / 'metadata.json'
+                        if metadata_file.exists():
+                            template_data = load_json_file(metadata_file)
+                        else:
+                            template_data = {'name': template_dir.name}
+                        
+                        # Check for files
+                        html_file = template_dir / 'email.html'
+                        plain_file = template_dir / 'plain.txt'
+                        attachments_dir = template_dir / 'attachments'
+                        
+                        template_data.update({
+                            'name': template_dir.name,
+                            'has_html': html_file.exists(),
+                            'has_plain': plain_file.exists(),
+                            'has_attachments': attachments_dir.exists() and any(attachments_dir.iterdir()),
+                            'path': str(template_dir)
+                        })
+                        
+                        templates.append(template_data)
+                        
+                    except Exception as e:
+                        self.logger.error(f"Error reading template {template_dir}: {e}")
+            
+            return templates
+        except Exception as e:
+            self.logger.error(f"Error getting message templates: {e}")
+            return []
+    
+    def get_campaigns(self) -> List[Dict[str, Any]]:
+        """Get all campaigns"""
+        try:
+            campaigns_dir = get_data_path('campaigns')
+            campaigns = []
+            
+            for campaign_dir in campaigns_dir.iterdir():
+                if campaign_dir.is_dir():
+                    try:
+                        config_file = campaign_dir / 'config.json'
+                        status_file = campaign_dir / 'status.json'
+                        stats_file = campaign_dir / 'stats.json'
+                        
+                        campaign_data = {'name': campaign_dir.name}
+                        
+                        if config_file.exists():
+                            campaign_data.update(load_json_file(config_file))
+                        
+                        if status_file.exists():
+                            campaign_data.update(load_json_file(status_file))
+                        
+                        if stats_file.exists():
+                            campaign_data.update(load_json_file(stats_file))
+                        
+                        campaigns.append(campaign_data)
+                        
+                    except Exception as e:
+                        self.logger.error(f"Error reading campaign {campaign_dir}: {e}")
+            
+            return campaigns
+        except Exception as e:
+            self.logger.error(f"Error getting campaigns: {e}")
+            return []
+    
+    # Placeholder methods for saving data
+    def import_leads_file(self, file, list_name: str, duplicate_handling: str) -> Dict[str, Any]:
+        """Import leads from uploaded file"""
+        # TODO: Implement file import logic
+        return {'message': 'Import functionality to be implemented', 'imported': 0}
+    
+    def save_smtp_server(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Save SMTP server configuration"""
+        # TODO: Implement SMTP save logic
+        return {'message': 'SMTP save functionality to be implemented'}
+    
+    def test_smtp_connection(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Test SMTP server connection"""
+        # TODO: Implement SMTP test logic
+        return {'success': True, 'message': 'SMTP test functionality to be implemented'}
         
     # Leads Management
     def get_leads_lists(self) -> List[Dict[str, Any]]:
